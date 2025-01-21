@@ -1,23 +1,23 @@
-import nltk, collections, re, os
+import nltk, collections, re, os, argparse
 import numpy as np
 from dotenv import load_dotenv
+from rich_argparse import RichHelpFormatter
 from atproto import Client, models
 
 load_dotenv()
 
 username = os.getenv("BSKY_USERNAME")
-password = os.getenv("BSKY_PASSWORD")
+password = os.getenv("BSKY_PASSWORD") #get your bsky creds from an env file
 
+parser = argparse.ArgumentParser(
+                    prog='python threader.py',
+                    description='Bluesky Thread Poster: convert long chunks of text into threaded bluesky posts', formatter_class=RichHelpFormatter)
 
-paragraph = """
-THIS IS A TEST OF A PROGRAM I'M WRITING, IGNORE THIS THREAD. TEXT IS FROM https://taliabhattwrites.substack.com/p/the-third-sex
+parser.add_argument('filename') # positional argument
+args = parser.parse_args()
 
-Consider a mechanism whose sole function is to classify all inputs it receives as one of two categories: One and Zero. The inputs, it must be said, vary greatly in temperament, expression, embodiment, internality, and so on, but that isn’t as much of a hurdle for the machine as it seems. It has been programmed with a few simple lines of code that enable it to differentiate between Ones and Zeroes within acceptable margins of tolerance. Ones tend to look and behave like this, Zeroes tend to be like that. These truisms are crude, simplistic, and even reductive, true, but they work. As such, the machine chugs on, happily reducing complex inputs to a blunt binary classification, its delivery-day code having been deemed “good enough”.
-
-Of course, there is still the matter of how the machine should behave when its schema fails, when it is presented with inputs that do indeed prove to be too ambiguous to easily classify. For however high the correlation between traits, sometimes a specimen that simply defies easy categorization will confound its decision-making, often enough to pose a problem. Does the code need to be updated? Almost certainly, but legacy code is a stubborn thing, mired in dependencies and versioning faff, deeply resistant to the most perfunctory of edits. Too many now rely on this iteration of the machine, on this particular instantiation of its logic, and it is almost universally agreed that any changes are best handled downstream—at least, among those with the power to change it.
-
-The machine and its users are thus forced to consider: In the case of an “error”, a “mistake”, so to speak, is it better to classify something as a One or a Zero?
-"""
+with open(args.filename, "r") as f:
+    paragraph = f.read()
 
 nltk.download('punkt')
 sentences = nltk.sent_tokenize(paragraph) #break into sentences with NLP
@@ -70,7 +70,9 @@ for i in np.arange(len(sentences)):
 for i, skeet in enumerate(skeets):
     if not re.match(r"\.|!|\?|(...)|\"", skeets[i].strip()[-1]): #if the skeet doesn't look like the end of a sentence; add ellipses
         skeets[i]+="..."
-        skeets[i+1]="..."+skeets[i+1]
+        try:
+            skeets[i+1]="..."+skeets[i+1]
+        except IndexError: pass #catches the case where it ends in something other than a full sentence
     else: 
         pass
     

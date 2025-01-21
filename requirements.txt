@@ -1,0 +1,5 @@
+atproto==0.0.57
+nltk==3.9.1
+numpy==2.2.2
+python-dotenv==1.0.1
+rich_argparse==1.6.0
