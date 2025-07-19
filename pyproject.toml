@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluesky-threader"
+version = "0.0.1"
+authors = [
+  { name="Persephone", email="author@example.com" },
+]
+description = "Bluesky threader for LLM output. For the record, fuck LLMs, this is specifically to show that they just produce slop."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+dependencies = [
+    "nltk", 
+    "argparse",
+    "numpy",
+    "dotenv",
+    "rich_argparse",
+    "atproto",
+    "pycurl",
+    ]
+
+[project.scripts]
+bsky-thread = "bsky_threader.threader:main"
+
+[tool.setuptools.packages.find]
+where = ["src"] # Assuming your package source is in a 'src' directory
